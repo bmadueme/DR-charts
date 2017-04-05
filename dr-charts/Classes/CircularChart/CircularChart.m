@@ -168,7 +168,7 @@
             for(CAShapeLayer *shapeLayer in layer.sublayers){
                 if (CGPathContainsPoint(shapeLayer.path, 0, touchPoint, YES)) {
                     [shapeLayer setShadowRadius:10.0f];
-                    [shapeLayer setShadowColor:[[UIColor blackColor] CGColor]];
+                    [shapeLayer setShadowColor:[[UIColor clearColor] CGColor]];
                     [shapeLayer setShadowOpacity:1.0f];
                     
                     touchedLayer = shapeLayer;
@@ -253,7 +253,7 @@
     [dataShapeLayer setStrokeColor:[[UIColor whiteColor] CGColor]];
     [dataShapeLayer setLineWidth:3.0F];
     [dataShapeLayer setShadowRadius:5.0f];
-    [dataShapeLayer setShadowColor:[[UIColor blackColor] CGColor]];
+    [dataShapeLayer setShadowColor:[[UIColor clearColor] CGColor]];
     [dataShapeLayer setShadowOpacity:1.0f];
     
     CATextLayer *textLayer = [[CATextLayer alloc] init];
