@@ -70,4 +70,6 @@
 //To reload data on the graph
 - (void)reloadCircularChart;
 
+@property (nonatomic,strong) UIColor *tappedColor;
+
 @end
