@@ -12,7 +12,8 @@
 
 typedef enum{
     LegendTypeVertical = 0,
-    LegendTypeHorizontal
+    LegendTypeHorizontal,
+    LegendTypeNone
 }LegendType;
 
 @interface LegendView : UIView
