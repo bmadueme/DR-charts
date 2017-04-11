@@ -141,7 +141,7 @@
     [group setBeginTime:CACurrentMediaTime()];
     [group setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
     
-    [shapeLayer addAnimation:group forKey:@"animate"];
+   // [shapeLayer addAnimation:group forKey:@"animate"];
     
     [CATransaction commit];
     
@@ -160,6 +160,23 @@
 
 #pragma mark Touch Action On Graph
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    if (self.showCustomMarkerView) {
+        [touchedLayer setShadowRadius:0.0f];
+        [touchedLayer setShadowColor:[[UIColor clearColor] CGColor]];
+        [touchedLayer setShadowOpacity:0.0f];
+        
+        [self.customMarkerView removeFromSuperview];
+    }
+    else if (self.showMarker) {
+        [touchedLayer setShadowRadius:0.0f];
+        [touchedLayer setShadowColor:[[UIColor clearColor] CGColor]];
+        [touchedLayer setShadowOpacity:0.0f];
+        
+        [dataShapeLayer removeFromSuperlayer];
+    }
+    UITouch *touch = [[event allTouches] anyObject];
+    CGPoint loc = [touch locationInView:self];
+    self.tappedColor = [self colorOfPoint:loc];
     if (self.showMarker || self.showCustomMarkerView) {
         CGPoint touchPoint = [[touches anyObject] locationInView:self.circularChartView];
         
@@ -167,9 +184,9 @@
             CALayer *layer = [self.circularChartView.layer hitTest:touchPoint];
             for(CAShapeLayer *shapeLayer in layer.sublayers){
                 if (CGPathContainsPoint(shapeLayer.path, 0, touchPoint, YES)) {
-                    [shapeLayer setShadowRadius:10.0f];
-                    [shapeLayer setShadowColor:[[UIColor clearColor] CGColor]];
-                    [shapeLayer setShadowOpacity:1.0f];
+                    [shapeLayer setShadowRadius:0.0f];
+                    [shapeLayer setShadowColor:[[UIColor blackColor] CGColor]];
+                    [shapeLayer setShadowOpacity:0.0f];
                     
                     touchedLayer = shapeLayer;
                     
@@ -183,15 +200,32 @@
                     if ([self.delegate respondsToSelector:@selector(didTapOnCircularChartWithValue:)]) {
                         [self.delegate didTapOnCircularChartWithValue:data];
                     }
-                    
+                    self.tappedColor = [UIColor whiteColor];
                     break;
                 }
             }
         }
-    }
+    }}
+-(UIColor *) colorOfPoint:(CGPoint)point
+{
+    unsigned char pixel[4] = {0};
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(pixel,
+                                                 1, 1, 8, 4, colorSpace, (CGBitmapInfo)kCGImageAlphaPremultipliedLast);
+    
+    CGContextTranslateCTM(context, -point.x, -point.y);
+    
+    [self.layer renderInContext:context];
+    
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    UIColor *color = [UIColor colorWithRed:pixel[0]/255.0
+                                     green:pixel[1]/255.0 blue:pixel[2]/255.0
+                                     alpha:pixel[3]/255.0];
+    return color;
 }
-
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    /*self.tappedColor = [UIColor whiteColor];
     if (self.showCustomMarkerView) {
         [touchedLayer setShadowRadius:0.0f];
         [touchedLayer setShadowColor:[[UIColor clearColor] CGColor]];
@@ -205,11 +239,11 @@
         [touchedLayer setShadowOpacity:0.0f];
         
         [dataShapeLayer removeFromSuperlayer];
-    }
+    }*/
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-    if (self.showCustomMarkerView) {
+   /* if (self.showCustomMarkerView) {
         [touchedLayer setShadowRadius:0.0f];
         [touchedLayer setShadowColor:[[UIColor clearColor] CGColor]];
         [touchedLayer setShadowOpacity:0.0f];
@@ -223,7 +257,7 @@
         [touchedLayer setShadowOpacity:0.0f];
         
         [dataShapeLayer removeFromSuperlayer];
-    }
+    }*/
 }
 
 #pragma mark Show Custom Marker
